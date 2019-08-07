@@ -2,11 +2,11 @@
   (:require [rum.core :as rum]
             [antizer.rum :as ant]))
 
-(rum/defc select-csv-button[on-select]
+(rum/defc select-csv-button [on-select]
   (ant/upload {:accept ".csv"
                :multiple false
                :show-upload-list false
-               :before-upload (fn [_ _] false) ; we have to discard uploading
+               :before-upload (fn [] false) ; we have to discard uploading
                :on-change (fn [result] (on-select (-> result .-file)))}
               (ant/button [(ant/icon {:type :file}) "Select CSV file"])))
 
@@ -29,7 +29,8 @@
       (ant/input {:default-value value
                   :autoFocus true
                   :on-press-enter (fn [e]
-                                    (let [new-value (e->val e)]
+                                    (let [new-value (e->val e)
+                                          valid? (or valid? identity)]
                                       (if (valid? new-value)
                                         (do
                                           (reset! edit? false)

@@ -46,7 +46,6 @@
   {:title (table-column-title key stats)
    :dataIndex key
    :key key
-   :width "16.6%"
    :render (fn [text _ index]
              (let [ef-ref (atom nil)]
                (rum/with-ref
@@ -61,7 +60,7 @@
                                 (update-record! index key v))})
                  #(reset! ef-ref %))))})
 
-(defn on-csv-selected[file]
+(defn on-csv-selected [file]
   (set-file! file)
   (-> (utils/file-read-csv file)
       (.then (fn [[data columns]]
