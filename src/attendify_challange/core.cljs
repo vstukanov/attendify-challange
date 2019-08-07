@@ -7,7 +7,10 @@
 
 ;;
 ;; State API
-(def ^{:private true} default-app-state {:file nil :data nil :columns nil})
+(def ^{:private true} default-app-state {:file nil
+                                         :data nil
+                                         :columns nil
+                                         :error nil})
 
 (defonce app-state (atom default-app-state))
 
@@ -15,7 +18,12 @@
   (swap! app-state update-in [:data index] assoc key value))
 
 (defn set-file! [file]
-  (swap! app-state assoc :file (utils/file->map file)))
+  (swap! app-state #(-> %
+                        (assoc :file file)
+                        (assoc :error nil))))
+
+(defn set-error! [msg]
+  (swap! app-state assoc :error msg))
 
 (defn reset-app-state! []
   (reset! app-state default-app-state))
@@ -27,6 +35,8 @@
 
 ;;
 ;; Views
+
+(def max-file-size (* 1024 1024))
 (def focused-comp (atom nil))
 
 (def ^{:private true} validation-map
@@ -61,15 +71,25 @@
                  #(reset! ef-ref %))))})
 
 (defn on-csv-selected [file]
-  (set-file! file)
-  (-> (utils/file-read-csv file)
-      (.then (fn [[data columns]]
-               (set-data! data columns)))))
+  (let [file' (utils/file->map file)]
+    (if (> (:size file') max-file-size)
+      (set-error! "Too large input file.")
+      (do
+        (set-file! file')
+        (-> (utils/file-read-csv file)
+            (.then (fn [[data columns]]
+                     (set-data! data columns))))))))
 
 (rum/defc app-header < rum/reactive []
-  (let [{:keys [file]} (rum/react app-state)]
+  (let [{:keys [file error]} (rum/react app-state)]
     (if (nil? file)
-      (componets/select-csv-button on-csv-selected)
+      [:div
+       (componets/select-csv-button on-csv-selected)
+       (if error
+         (ant/alert {:type :error
+                     :style {:margin-top 10}
+                     :description error
+                     :message "Upload Error"}))]
       (componets/file-info file reset-app-state!))))
 
 (rum/defc app-table < rum/reactive []
@@ -78,12 +98,12 @@
                                     :SepalWidthCm
                                     :PetalLengthCm
                                     :PetalWidthCm] 3)]
-    (and data
-         (ant/table {:dataSource data
-                     :size :small
-                     :bordered true
-                     :pagination false
-                     :columns (map #(->table-column % stats) columns)}))))
+    (if data
+      (ant/table {:dataSource data
+                  :size :small
+                  :bordered true
+                  :pagination false
+                  :columns (map #(->table-column % stats) columns)}))))
 
 (rum/defc app []
   (ant/layout

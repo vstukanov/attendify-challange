@@ -12,7 +12,6 @@
       (.readAsText reader file))))
 
 (defn parse-csv [str]
-  (print (csv/read-csv str))
   (let [data (csv/read-csv str)
         columns (map keyword (first data))]
     [(->> (rest data)
