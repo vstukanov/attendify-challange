@@ -2,11 +2,7 @@
 
 I decided to extend a Task to make it work with any csv file.
 The aggregation and validation functionality will work only with Iris.csv
-dataset because such meta-info doesn't included in csv and was hardcoded.
-
-Things that might be improved:
-- CSV parser (atm it's super simple)
-- Input file validation
+dataset because validation meta-info was hardcoded.
 
 ## Setup
 

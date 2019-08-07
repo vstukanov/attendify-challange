@@ -46,3 +46,15 @@
        (map (comp #(.toFixed % n)
                   #(/ % (count data))))
        (zipmap keys)))
+
+(defn- validate-row [r vm]
+  (->> (keys vm)
+       (map #(if (not (% r))
+                 true
+                 ((% vm) (% r))))
+       (reduce #(and %1 %2))))
+
+(defn validate-data [d vm]
+  (->> d
+       (map #(validate-row % vm))
+       (reduce #(and %1 %2))))

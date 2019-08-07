@@ -78,19 +78,21 @@
         (set-file! file')
         (-> (utils/file-read-csv file)
             (.then (fn [[data columns]]
-                     (set-data! data columns))))))))
+                     (if (utils/validate-data data validation-map)
+                       (set-data! data columns)
+                       (set-error! "Incorect file structure.")))))))))
 
 (rum/defc app-header < rum/reactive []
   (let [{:keys [file error]} (rum/react app-state)]
-    (if (nil? file)
-      [:div
+    [:div
+     (if (nil? file)
        (componets/select-csv-button on-csv-selected)
-       (if error
+       (componets/file-info file reset-app-state!))
+     (if error
          (ant/alert {:type :error
                      :style {:margin-top 10}
                      :description error
-                     :message "Upload Error"}))]
-      (componets/file-info file reset-app-state!))))
+                     :message "Upload Error"}))]))
 
 (rum/defc app-table < rum/reactive []
   (let [{:keys [data columns]} (rum/react app-state)
