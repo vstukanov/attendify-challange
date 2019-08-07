@@ -1,10 +1,12 @@
 # attendify-challange
 
-FIXME: Write a one-line description of your library/project.
+I decided to extend a Task to make it work with any csv file.
+The aggregation and validation functionality will work only with Iris.csv
+dataset because such meta-info doesn't included in csv and was hardcoded.
 
-## Overview
-
-FIXME: Write a paragraph about the library/project and highlight its goals.
+Things that might be improved:
+- CSV parser (atm it's super simple)
+- Input file validation
 
 ## Setup
 
@@ -30,7 +32,7 @@ To create a production build run:
     lein do clean, cljsbuild once min
 
 And open your browser in `resources/public/index.html`. You will not
-get live reloading, nor a REPL. 
+get live reloading, nor a REPL.
 
 ## License
 
