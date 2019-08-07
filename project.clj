@@ -11,7 +11,8 @@
                  [org.clojure/core.async  "0.4.500"]
                  [rum "0.11.3"]
                  [antizer "0.3.1"]
-                 [manifold-cljs "0.1.7-0"]]
+                 [manifold-cljs "0.1.7-0"]
+                 [testdouble/clojurescript.csv "0.4.3"]]
 
   :plugins [[lein-figwheel "0.5.19"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]

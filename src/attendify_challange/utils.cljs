@@ -1,5 +1,6 @@
 (ns attendify-challange.utils
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [testdouble.cljs.csv :as csv]))
 
 (defn promise[fn] (js/Promise. fn))
 
@@ -11,8 +12,8 @@
       (.readAsText reader file))))
 
 (defn parse-csv [str]
-  (let [data (->> (str/split-lines str)
-                  (map #(str/split % #",")))
+  (print (csv/read-csv str))
+  (let [data (csv/read-csv str)
         columns (map keyword (first data))]
     [(->> (rest data)
           (map #(zipmap columns %)))
